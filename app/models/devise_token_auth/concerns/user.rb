@@ -1,27 +1,26 @@
+require 'mongoid-locker'
+
 module DeviseTokenAuth::Concerns::User
   extend ActiveSupport::Concern
 
   included do
+    include Mongoid::Locker
+
     # Include default devise modules. Others available are:
     # :confirmable, :lockable, :timeoutable and :omniauthable
     devise :database_authenticatable, :registerable,
           :recoverable, :rememberable, :trackable, :validatable,
           :confirmable, :omniauthable
 
-    serialize :tokens, JSON
+    #serialize :tokens, JSON
 
     validates_presence_of :email, if: Proc.new { |u| u.provider == 'email' }
 
     # only validate unique emails among email registration users
     validate :unique_email_user, on: :create
 
-    # can't set default on text fields in mysql, simulate here instead.
-    after_save :set_empty_token_hash
-    after_initialize :set_empty_token_hash
-
     # get rid of dead tokens
     before_save :destroy_expired_tokens
-
 
     # don't use default devise email validation
     def email_required?
@@ -181,9 +180,7 @@ module DeviseTokenAuth::Concerns::User
     return build_auth_header(token, client_id)
   end
 
-
   protected
-
 
   # NOTE: ensure that fragment comes AFTER querystring for proper $location
   # parsing using AngularJS.
@@ -208,12 +205,8 @@ module DeviseTokenAuth::Concerns::User
     end
   end
 
-  def set_empty_token_hash
-    self.tokens ||= {} if has_attribute?(:tokens)
-  end
-
   def destroy_expired_tokens
-    self.tokens.delete_if{|cid,v|
+    self.tokens.delete_if {|cid,v|
       expiry = v[:expiry] || v["expiry"]
       DateTime.strptime(expiry.to_s, '%s') < Time.now
     }

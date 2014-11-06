@@ -1,4 +1,4 @@
-source "https://rubygems.org"
+source "http://ruby.taobao.org"
 
 # Declare your gem's dependencies in devise_token_auth.gemspec.
 # Bundler will treat runtime dependencies like base dependencies, and
