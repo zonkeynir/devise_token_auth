@@ -8,7 +8,7 @@ module DeviseTokenAuth::Concerns::User
 
     # Only enables modules if the user didn't
     unless self.method_defined?(:devise_modules)
-      devise :database_authenticatable, :registerable, :recoverable
+      devise :database_authenticatable, :registerable, :recoverable,
              :trackable, :validatable, :confirmable, :omniauthable
     end
 
