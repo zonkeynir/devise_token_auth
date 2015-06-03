@@ -6,11 +6,11 @@ module DeviseTokenAuth::Concerns::User
   included do
     include Mongoid::Locker
 
-    # Include default devise modules. Others available are:
-    # :confirmable, :lockable, :timeoutable and :omniauthable
-    devise :database_authenticatable, :registerable,
-          :recoverable, :rememberable, :trackable, :validatable,
-          :confirmable, :omniauthable
+    # Only enables modules if the user didn't
+    unless self.method_defined?(:devise_modules)
+      devise :database_authenticatable, :registerable, :recoverable
+             :trackable, :validatable, :confirmable, :omniauthable
+    end
 
     #serialize :tokens, JSON
 
@@ -178,6 +178,11 @@ module DeviseTokenAuth::Concerns::User
     self.save!
 
     return build_auth_header(token, client_id)
+  end
+
+  # Only makes user confirmable if the module is included
+  def confirmed?
+    self.devise_modules.exclude?(:confirmable) || super
   end
 
   protected
