@@ -26,11 +26,11 @@ module DeviseTokenAuth
 
         sign_in(:user, @resource, store: false, bypass: false)
 
-        render json: {
-          data: @resource.as_json(except: [
-            :tokens, :created_at, :updated_at
-          ])
-        }
+        #render json: {
+          #data: @resource.as_json(except: [
+            #:tokens, :created_at, :updated_at
+          #])
+        #}
 
       elsif @resource and not @resource.confirmed?
         render json: {
@@ -47,6 +47,7 @@ module DeviseTokenAuth
           errors: ["Invalid login credentials. Please try again."]
         }, status: 401
       end
+      @resource
     end
 
     def destroy
