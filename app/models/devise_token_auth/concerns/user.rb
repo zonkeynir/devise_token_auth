@@ -1,10 +1,10 @@
-require 'mongoid-locker'
+#require 'mongoid-locker'
 
 module DeviseTokenAuth::Concerns::User
   extend ActiveSupport::Concern
 
   included do
-    include Mongoid::Locker
+    #include Mongoid::Locker
 
     # Only enables modules if the user didn't
     unless self.method_defined?(:devise_modules)
