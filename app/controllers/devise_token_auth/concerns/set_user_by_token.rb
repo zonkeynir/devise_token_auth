@@ -55,7 +55,8 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     if DeviseTokenAuth.threadsafe
       # Lock the user record during any auth_header updates to ensure
       # we don't have write contention from multiple threads
-      @resource.with_lock { do_auth_header_update }
+      #@resource.with_lock { do_auth_header_update }
+      do_auth_header_update
     else
       do_auth_header_update
     end
